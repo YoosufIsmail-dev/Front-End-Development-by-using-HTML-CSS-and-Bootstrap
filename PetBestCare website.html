@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PawPal — Your All-in-One Pet Care Universe</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,700;1,9..144,900&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  --ink:       #0d1117;
+  --ink-80:    rgba(13,17,23,0.8);
+  --midnight:  #111827;
+  --slate:     #1e293b;
+  --terracotta:#c1440e;
+  --terra-lt:  #e05a28;
+  --sand:      #f5ede0;
+  --ivory:     #faf7f2;
+  --oat:       #ede8de;
+  --stone:     #9ca3af;
+  --white:     #ffffff;
+  --r: 16px;
+  --r-lg: 24px;
+  --r-xl: 36px;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Epilogue',sans-serif;
+  background:var(--ivory);
+  color:var(--ink);
+  overflow-x:hidden;
+}
+/* ── TOUCH OPTIMIZATION: remove 300ms delay on all interactive elements ── */
+a,button,input,select,textarea,[role="button"]{touch-action:manipulation}
+
+/* grain overlay */
+body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:.5;
+}
+
+/* ═══════ SCROLL OFFSET ═══════ */
+section[id]{scroll-margin-top:72px}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+.nav{
+  position:sticky;top:0;z-index:1000;
+  background:rgba(250,247,242,.95);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--oat);
+  transition:box-shadow .3s;
+}
+.nav.scrolled{box-shadow:0 2px 32px rgba(0,0,0,.08)}
+.nav-inner{
+  max-width:1320px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2rem;gap:1rem;
+}
+.nav-logo{
+  font-family:'Fraunces',serif;
+  font-size:1.65rem;font-weight:900;
+  color:var(--ink);text-decoration:none;
+  letter-spacing:-.03em;white-space:nowrap;
+}
+.nav-logo em{color:var(--terracotta);font-style:normal}
+.nav-links{
+  display:flex;align-items:center;gap:.2rem;
+  list-style:none;
+}
+.nav-links a{
+  font-size:.83rem;font-weight:500;letter-spacing:.01em;
+  color:var(--ink);text-decoration:none;
+  padding:.42rem .75rem;border-radius:8px;
+  transition:background .2s,color .2s;
+  position:relative;
+}
+.nav-links a:hover{background:var(--oat);color:var(--terracotta)}
+.nav-links a:active{background:var(--sand);color:var(--terracotta);transform:scale(.97)}
+.nav-links a.active{color:var(--terracotta);font-weight:700}
+.nav-links a.active::after{
+  content:'';position:absolute;bottom:3px;left:50%;
+  transform:translateX(-50%);
+  width:16px;height:2px;border-radius:2px;
+  background:var(--terracotta);
+}
+.nav-actions{display:flex;align-items:center;gap:.75rem}
+.btn-ghost{
+  font-size:.83rem;font-weight:600;
+  color:var(--ink);text-decoration:none;
+  padding:.44rem 1.1rem;border-radius:50px;
+  border:1.5px solid var(--oat);
+  transition:border-color .2s,color .2s;
+}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.btn-ghost:active{background:var(--oat);transform:scale(.96)}
+.btn-fill{
+  font-size:.83rem;font-weight:700;
+  color:var(--white);text-decoration:none;
+  padding:.5rem 1.25rem;border-radius:50px;
+  background:var(--terracotta);
+  transition:background .2s,transform .2s;
+  box-shadow:0 4px 16px rgba(193,68,14,.3);
+}
+.btn-fill:hover{background:var(--terra-lt);transform:translateY(-1px)}
+.btn-fill:active{background:var(--terracotta);transform:scale(.95) translateY(0)}
+.nav-burger{
+  display:none;background:none;border:none;
+  cursor:pointer;padding:.3rem;
+  flex-direction:column;gap:5px;
+}
+.nav-burger:active{opacity:.6}
+.nav-burger span{
+  display:block;width:22px;height:2px;
+  background:var(--ink);border-radius:2px;
+  transition:transform .3s,opacity .3s,width .3s;
+  transform-origin:center;
+}
+/* Animated X when menu is open */
+.nav-burger.is-open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-burger.is-open span:nth-child(2){opacity:0;transform:scaleX(0)}
+.nav-burger.is-open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ═══════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════ */
+.hero{
+  min-height:94vh;
+  background:var(--midnight);
+  display:grid;place-items:center;
+  position:relative;overflow:hidden;
+  padding:6rem 0 4rem;
+}
+/* big decorative arc */
+.hero::before{
+  content:'';position:absolute;
+  width:900px;height:900px;border-radius:50%;
+  background:radial-gradient(circle at 30% 50%, rgba(193,68,14,.18) 0%, transparent 65%);
+  top:-200px;left:-300px;pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle, rgba(245,237,224,.06) 0%, transparent 70%);
+  bottom:-100px;right:-150px;pointer-events:none;
+}
+.hero-inner{
+  max-width:1320px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;
+  align-items:center;gap:5rem;
+  padding:0 2rem;position:relative;z-index:1;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(193,68,14,.15);
+  border:1px solid rgba(193,68,14,.3);
+  color:var(--terracotta);
+  font-size:.72rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:.35rem 1rem;border-radius:50px;
+  margin-bottom:1.5rem;
+  animation:fadeUp .6s ease both;
+}
+.hero h1{
+  font-family:'Fraunces',serif;
+  font-size:clamp(3rem,5.5vw,5.4rem);
+  font-weight:900;line-height:1.03;
+  color:var(--white);letter-spacing:-.03em;
+  margin-bottom:1.6rem;
+  animation:fadeUp .65s ease .1s both;
+}
+.hero h1 i{color:var(--terracotta);font-style:italic}
+.hero-desc{
+  font-size:1.05rem;color:rgba(255,255,255,.55);
+  line-height:1.8;max-width:440px;margin-bottom:2.5rem;
+  animation:fadeUp .65s ease .2s both;
+}
+.hero-btns{
+  display:flex;flex-wrap:wrap;gap:.85rem;
+  animation:fadeUp .65s ease .3s both;
+}
+.hero-btn-primary{
+  background:var(--terracotta);color:var(--white);
+  font-size:.95rem;font-weight:700;
+  padding:.85rem 2rem;border-radius:50px;
+  text-decoration:none;
+  box-shadow:0 8px 28px rgba(193,68,14,.4);
+  transition:background .2s,transform .2s;
+}
+.hero-btn-primary:hover{background:var(--terra-lt);transform:translateY(-2px)}
+.hero-btn-primary:active{background:var(--terracotta);transform:scale(.95) translateY(0);box-shadow:0 4px 14px rgba(193,68,14,.3)}
+.hero-btn-outline{
+  background:rgba(255,255,255,.06);
+  border:1.5px solid rgba(255,255,255,.18);
+  color:var(--white);
+  font-size:.95rem;font-weight:600;
+  padding:.82rem 1.8rem;border-radius:50px;
+  text-decoration:none;
+  transition:background .2s,border-color .2s;
+}
+.hero-btn-outline:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.4)}
+.hero-btn-outline:active{background:rgba(255,255,255,.18);transform:scale(.95)}
+.hero-stats{
+  display:flex;gap:2.5rem;margin-top:3rem;
+  animation:fadeUp .65s ease .4s both;
+}
+.hero-stat-num{
+  font-family:'Fraunces',serif;
+  font-size:1.9rem;font-weight:900;color:var(--white);
+  line-height:1;
+}
+.hero-stat-label{
+  font-size:.72rem;font-weight:600;letter-spacing:.07em;
+  text-transform:uppercase;color:rgba(255,255,255,.4);
+  margin-top:.25rem;
+}
+
+/* hero image side */
+.hero-visual{
+  position:relative;
+  animation:fadeLeft .8s ease .2s both;
+}
+.hero-img{
+  width:100%;aspect-ratio:3/4;
+  object-fit:cover;
+  border-radius:var(--r-xl) var(--r-xl) 120px var(--r-xl);
+  display:block;
+}
+.hero-badge-a{
+  position:absolute;bottom:28px;left:-20px;
+  background:var(--white);border-radius:var(--r-lg);
+  padding:1rem 1.3rem;
+  box-shadow:0 16px 48px rgba(0,0,0,.18);
+  display:flex;align-items:center;gap:.75rem;
+  z-index:2;
+}
+.hero-badge-a .icon{font-size:1.5rem}
+.hero-badge-a strong{display:block;font-size:.88rem;font-weight:700;color:var(--ink)}
+.hero-badge-a small{color:var(--stone);font-size:.73rem}
+.hero-badge-b{
+  position:absolute;top:24px;right:-16px;
+  background:var(--terracotta);color:var(--white);
+  border-radius:var(--r);padding:.75rem 1.1rem;
+  font-weight:700;font-size:.8rem;text-align:center;
+  box-shadow:0 8px 28px rgba(193,68,14,.45);
+  z-index:2;line-height:1.4;
+}
+
+/* ═══════════════════════════════════════════
+   SHARED SECTION STYLES
+═══════════════════════════════════════════ */
+.section{padding:6rem 0}
+.section-sm{padding:5rem 0}
+.container{max-width:1320px;margin:0 auto;padding:0 2rem}
+.eyebrow{
+  font-size:.7rem;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--terracotta);
+  margin-bottom:.75rem;display:block;
+}
+.display{
+  font-family:'Fraunces',serif;
+  font-size:clamp(2rem,3.5vw,2.8rem);
+  font-weight:900;line-height:1.12;
+  letter-spacing:-.03em;color:var(--ink);
+  margin-bottom:1rem;
+}
+.display em{color:var(--terracotta);font-style:italic}
+.display-inv{color:var(--white)}
+.display-inv em{color:var(--terracotta)}
+.lead-text{
+  font-size:.96rem;color:var(--stone);
+  line-height:1.75;max-width:520px;
+}
+.section-hd{margin-bottom:3.5rem}
+
+/* ═══════════════════════════════════════════
+   SERVICES — alternating stripe layout
+═══════════════════════════════════════════ */
+.services-bg{background:var(--ivory)}
+.services-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5px;
+  background:var(--oat);border-radius:var(--r-xl);overflow:hidden;
+  border:1.5px solid var(--oat);
+}
+.service-tile{
+  background:var(--ivory);
+  padding:2.8rem 2.4rem;
+  transition:background .3s,transform .3s;
+  position:relative;
+}
+.service-tile::after{
+  content:'';position:absolute;bottom:0;right:0;
+  width:80px;height:80px;
+  background:var(--oat);border-radius:var(--r-xl) 0 0 0;
+  opacity:0;transition:opacity .3s;
+}
+.service-tile:hover{background:var(--sand);transform:translateY(-3px)}
+.service-tile:active{background:var(--sand);transform:scale(.98) translateY(0)}
+.service-tile:hover::after{opacity:1}
+.tile-num{
+  font-family:'Fraunces',serif;
+  font-size:3rem;font-weight:900;color:var(--oat);
+  line-height:1;margin-bottom:1.5rem;letter-spacing:-.05em;
+}
+.tile-icon{
+  width:58px;height:58px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;margin-bottom:1.5rem;
+}
+.tile-icon.adopt{background:#fde8d0}
+.tile-icon.vet{background:#d0ead8}
+.tile-icon.shop{background:#d0dcea}
+.service-tile h3{
+  font-family:'Fraunces',serif;
+  font-size:1.35rem;font-weight:700;margin-bottom:.6rem;
+  letter-spacing:-.02em;
+}
+.service-tile p{font-size:.88rem;color:#6b7280;line-height:1.65}
+.tile-link{
+  display:inline-flex;align-items:center;gap:.4rem;
+  color:var(--terracotta);font-weight:600;font-size:.84rem;
+  text-decoration:none;margin-top:1.2rem;
+  transition:gap .2s;
+}
+.tile-link:hover{gap:.8rem}
+.tile-link:active{opacity:.7;transform:scale(.97)}
+
+/* ═══════════════════════════════════════════
+   ADOPT — dark section
+═══════════════════════════════════════════ */
+.adopt-bg{background:var(--midnight)}
+.adopt-bg .eyebrow{color:var(--terracotta)}
+.adopt-bg .display{color:var(--white)}
+.pet-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1.25rem;
+}
+.pet-card{
+  background:var(--slate);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  transition:transform .3s,box-shadow .3s;
+  cursor:pointer;
+}
+.pet-card:hover{transform:translateY(-8px);box-shadow:0 28px 60px rgba(0,0,0,.4)}
+.pet-card:active{transform:scale(.97) translateY(0);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.pet-thumb{
+  width:100%;aspect-ratio:4/3;
+  position:relative;overflow:hidden;
+}
+.pet-thumb img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s;
+}
+.pet-card:hover .pet-thumb img{transform:scale(1.08)}
+.pet-badge{
+  position:absolute;top:10px;right:10px;
+  border-radius:50px;padding:.2rem .65rem;
+  font-size:.68rem;font-weight:700;letter-spacing:.03em;
+}
+.badge-m{background:rgba(13,17,23,.6);color:#93c5fd;backdrop-filter:blur(6px)}
+.badge-f{background:rgba(13,17,23,.6);color:#f9a8d4;backdrop-filter:blur(6px)}
+.new-badge{
+  position:absolute;top:10px;left:10px;
+  background:var(--terracotta);color:var(--white);
+  border-radius:50px;padding:.2rem .65rem;
+  font-size:.65rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+}
+.pet-body{padding:1.25rem}
+.pet-body h5{
+  font-family:'Fraunces',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--white);margin-bottom:.2rem;
+  letter-spacing:-.02em;
+}
+.pet-meta{font-size:.78rem;color:var(--stone);margin-bottom:.75rem}
+.pet-tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:1rem}
+.pet-tag{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.6);
+  border-radius:50px;padding:.15rem .6rem;
+  font-size:.72rem;font-weight:500;
+}
+.pet-adopt{
+  display:block;width:100%;
+  background:var(--terracotta);color:var(--white);
+  border:none;border-radius:10px;
+  padding:.6rem;font-size:.84rem;font-weight:700;
+  font-family:'Epilogue',sans-serif;
+  cursor:pointer;transition:background .2s;
+}
+.pet-adopt:hover{background:var(--terra-lt)}
+.pet-adopt:active{background:var(--terracotta);transform:scale(.96)}
+
+/* ═══════════════════════════════════════════
+   VETS — ivory section
+═══════════════════════════════════════════ */
+.vets-bg{background:var(--ivory)}
+.vet-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem;
+}
+.vet-card{
+  display:grid;grid-template-columns:160px 1fr;
+  gap:0;border-radius:var(--r-lg);overflow:hidden;
+  background:var(--white);
+  border:1.5px solid var(--oat);
+  transition:transform .3s,box-shadow .3s;
+}
+.vet-card:hover{transform:translateY(-4px);box-shadow:0 20px 48px rgba(0,0,0,.1)}
+.vet-card:active{transform:scale(.98) translateY(0);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.vet-img{
+  width:100%;height:100%;min-height:180px;
+  object-fit:cover;object-position:top;
+}
+.vet-body{padding:1.6rem}
+.vet-badge{
+  display:inline-block;
+  background:var(--sand);color:var(--terracotta);
+  font-size:.68rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  padding:.2rem .7rem;border-radius:50px;margin-bottom:.75rem;
+}
+.vet-body h5{
+  font-family:'Fraunces',serif;font-size:1.2rem;font-weight:700;
+  letter-spacing:-.02em;margin-bottom:.3rem;
+}
+.vet-specialty{font-size:.82rem;color:var(--stone);margin-bottom:.6rem}
+.vet-stars{color:#f59e0b;font-size:.85rem;margin-bottom:1rem}
+.vet-stars span{color:var(--stone);font-size:.75rem;margin-left:.3rem}
+.vet-book{
+  background:var(--midnight);color:var(--white);
+  border:none;border-radius:50px;
+  padding:.5rem 1.3rem;font-size:.82rem;font-weight:700;
+  font-family:'Epilogue',sans-serif;
+  cursor:pointer;transition:background .2s;
+}
+.vet-book:hover{background:var(--slate)}
+.vet-book:active{background:var(--ink);transform:scale(.95)}
+
+/* ═══════════════════════════════════════════
+   AI SECTION — terracotta
+═══════════════════════════════════════════ */
+.ai-bg{
+  background:var(--midnight);
+  position:relative;overflow:hidden;
+}
+.ai-bg::before{
+  content:'';position:absolute;
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle, rgba(193,68,14,.12) 0%, transparent 65%);
+  top:-200px;right:-200px;pointer-events:none;
+}
+.ai-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:5rem;align-items:center;
+  position:relative;z-index:1;
+}
+.ai-feats{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:.85rem;margin-top:2.5rem;
+}
+.ai-feat{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--r);padding:1.1rem;
+  color:var(--white);
+}
+.ai-feat .feat-ico{font-size:1.4rem;margin-bottom:.45rem}
+.ai-feat strong{display:block;font-size:.86rem;font-weight:700;margin-bottom:.15rem}
+.ai-feat small{font-size:.76rem;color:rgba(255,255,255,.45)}
+.chat-box{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:var(--r-xl);
+  padding:1.75rem;
+  height:460px;display:flex;flex-direction:column;
+  backdrop-filter:blur(8px);
+}
+.chat-hd{
+  display:flex;align-items:center;gap:.75rem;
+  padding-bottom:1.1rem;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  margin-bottom:1rem;
+}
+.chat-dot{
+  width:9px;height:9px;border-radius:50%;
+  background:#4ade80;
+  box-shadow:0 0 6px #4ade80;
+  animation:pulse 2s infinite;
+}
+.chat-hd-text strong{color:var(--white);font-size:.9rem;display:block}
+.chat-hd-text small{color:rgba(255,255,255,.4);font-size:.74rem}
+.chat-msgs{
+  flex:1;overflow-y:auto;display:flex;flex-direction:column;
+  gap:.7rem;padding-right:.25rem;
+}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+.msg{
+  max-width:84%;padding:.7rem 1rem;
+  border-radius:14px;font-size:.84rem;line-height:1.55;
+}
+.msg-bot{
+  background:rgba(255,255,255,.08);color:rgba(255,255,255,.9);
+  align-self:flex-start;border-bottom-left-radius:4px;
+}
+.msg-user{
+  background:var(--terracotta);color:var(--white);
+  align-self:flex-end;border-bottom-right-radius:4px;
+}
+.chat-input-row{
+  display:flex;gap:.6rem;margin-top:.9rem;
+}
+.chat-input{
+  flex:1;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:50px;color:var(--white);
+  padding:.65rem 1.1rem;font-size:.84rem;
+  font-family:'Epilogue',sans-serif;outline:none;
+  transition:border-color .2s;
+}
+.chat-input::placeholder{color:rgba(255,255,255,.3)}
+.chat-input:focus{border-color:var(--terracotta)}
+.chat-send{
+  background:var(--terracotta);border:none;
+  border-radius:50px;color:var(--white);
+  padding:.65rem 1.2rem;font-size:.84rem;font-weight:600;
+  cursor:pointer;transition:background .2s;
+  font-family:'Epilogue',sans-serif;
+}
+.chat-send:hover{background:var(--terra-lt)}
+.chat-send:active{background:var(--terracotta);transform:scale(.93)}
+.chat-send:disabled{opacity:.45;cursor:default}
+
+/* ═══════════════════════════════════════════
+   SHOP
+═══════════════════════════════════════════ */
+.shop-bg{background:var(--sand)}
+.shop-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:1.25rem;
+}
+.shop-card{
+  background:var(--white);border-radius:var(--r-lg);
+  overflow:hidden;border:1.5px solid var(--oat);
+  transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;
+}
+.shop-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.1)}
+.shop-card:active{transform:scale(.98) translateY(0);box-shadow:0 4px 16px rgba(0,0,0,.07)}
+.shop-thumb{
+  display:flex;align-items:center;justify-content:center;
+  font-size:3.2rem;height:130px;
+}
+.shop-info{padding:1.2rem;flex:1;display:flex;flex-direction:column}
+.shop-cat{
+  font-size:.65rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--terracotta);margin-bottom:.3rem;
+}
+.shop-info h6{font-size:.92rem;font-weight:700;margin-bottom:.4rem}
+.shop-price{
+  font-family:'Fraunces',serif;
+  font-size:1.15rem;font-weight:700;color:var(--ink);
+}
+.shop-add{
+  display:block;width:100%;background:var(--ink);color:var(--white);
+  border:none;border-radius:8px;padding:.5rem;
+  font-size:.8rem;font-weight:700;
+  font-family:'Epilogue',sans-serif;
+  cursor:pointer;margin-top:.9rem;transition:background .2s;
+}
+.shop-add:hover{background:var(--slate)}
+.shop-add:active{background:var(--ink);transform:scale(.95)}
+
+/* ═══════════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════════ */
+.testi-bg{background:var(--ivory)}
+.testi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.testi-card{
+  background:var(--white);border-radius:var(--r-lg);
+  padding:2.2rem;border:1.5px solid var(--oat);
+  position:relative;overflow:hidden;
+}
+.testi-card::before{
+  content:'\201C';
+  font-family:'Fraunces',serif;
+  font-size:7rem;color:var(--sand);
+  position:absolute;top:-1.5rem;left:1.5rem;
+  line-height:1;pointer-events:none;
+  font-weight:900;
+}
+.testi-stars{color:#f59e0b;font-size:.85rem;margin-bottom:1rem}
+.testi-text{
+  font-size:.95rem;line-height:1.75;color:#374151;
+  margin-bottom:1.5rem;font-style:italic;position:relative;z-index:1;
+}
+.testi-author{display:flex;align-items:center;gap:.85rem}
+.testi-av{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--sand);display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+}
+.testi-author strong{display:block;font-size:.88rem;font-weight:700}
+.testi-author small{color:var(--stone);font-size:.76rem}
+
+/* ═══════════════════════════════════════════
+   GALLERY — ink dark
+═══════════════════════════════════════════ */
+.gallery-bg{background:var(--ink)}
+.gallery-bg .eyebrow{color:var(--terracotta)}
+.gallery-bg .display{color:var(--white)}
+.gallery-bg .lead-text{color:rgba(255,255,255,.45)}
+.g-filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:2rem}
+.gf-btn{
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.55);
+  border-radius:50px;padding:.38rem 1rem;
+  font-size:.79rem;font-weight:600;
+  font-family:'Epilogue',sans-serif;
+  cursor:pointer;transition:all .2s;
+}
+.gf-btn:hover,.gf-btn.active{
+  background:var(--terracotta);border-color:var(--terracotta);color:var(--white);
+}
+.gf-btn:active{transform:scale(.93);opacity:.9}
+.g-grid{columns:3;column-gap:12px}
+.g-item{
+  break-inside:avoid;margin-bottom:12px;
+  border-radius:var(--r);overflow:hidden;
+  cursor:pointer;position:relative;
+}
+.g-item img{width:100%;display:block;transition:transform .4s}
+.g-item:hover img{transform:scale(1.06)}
+.g-item:active{transform:scale(.97);border-radius:var(--r)}
+.g-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,.75) 0%,transparent 50%);
+  opacity:0;transition:opacity .3s;
+  display:flex;flex-direction:column;justify-content:flex-end;padding:1rem;
+}
+.g-item:hover .g-overlay{opacity:1}
+.g-overlay h6{color:var(--white);font-size:.84rem;font-weight:700;margin-bottom:.1rem}
+.g-overlay span{color:rgba(255,255,255,.6);font-size:.72rem}
+.ig-strip{
+  display:flex;gap:10px;overflow-x:auto;padding-bottom:.5rem;
+  scroll-snap-type:x mandatory;
+  margin-top:3rem;
+}
+.ig-strip::-webkit-scrollbar{height:3px}
+.ig-strip::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:3px}
+.ig-item{
+  flex:0 0 140px;height:110px;border-radius:var(--r);
+  overflow:hidden;scroll-snap-align:start;
+}
+.ig-item img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.ig-item:hover img{transform:scale(1.08)}
+
+/* lightbox */
+.lightbox{
+  position:fixed;inset:0;z-index:99999;
+  background:rgba(0,0,0,.94);
+  display:none;align-items:center;justify-content:center;
+  padding:1rem;backdrop-filter:blur(8px);
+}
+.lightbox.open{display:flex}
+.lb-inner{max-width:840px;width:100%;position:relative}
+.lb-inner img{width:100%;border-radius:var(--r-lg);max-height:80vh;object-fit:contain}
+.lb-close{
+  position:absolute;top:-14px;right:-14px;
+  background:var(--terracotta);border:none;border-radius:50%;
+  width:38px;height:38px;color:var(--white);
+  font-size:.9rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+.lb-close:hover{background:var(--terra-lt)}
+.lb-close:active{background:var(--terracotta);transform:scale(.88)}
+.lb-cap{text-align:center;color:rgba(255,255,255,.75);margin-top:.9rem;font-size:.86rem}
+
+/* ═══════════════════════════════════════════
+   ABOUT
+═══════════════════════════════════════════ */
+.about-bg{background:var(--sand)}
+.about-inner{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:5rem;align-items:center;
+}
+.about-imgs{position:relative;padding-bottom:52px}
+.about-main{
+  width:100%;aspect-ratio:4/5;
+  object-fit:cover;border-radius:var(--r-xl);
+  display:block;box-shadow:0 32px 80px rgba(0,0,0,.15);
+}
+.about-accent{
+  position:absolute;bottom:0;right:-20px;
+  width:48%;aspect-ratio:1/1;
+  object-fit:cover;border-radius:var(--r-lg);
+  border:5px solid var(--sand);
+  box-shadow:0 16px 48px rgba(0,0,0,.18);
+}
+.about-float{
+  position:absolute;top:28px;left:-20px;
+  background:var(--midnight);color:var(--white);
+  border-radius:var(--r);padding:.9rem 1.2rem;
+  font-size:.78rem;font-weight:700;line-height:1.5;
+  text-align:center;
+  box-shadow:0 12px 36px rgba(0,0,0,.25);
+  z-index:2;
+}
+.about-float .f-ico{font-size:1.5rem;display:block;margin-bottom:.2rem}
+.about-checklist{list-style:none;padding:0;margin:1.5rem 0 2rem}
+.about-checklist li{
+  display:flex;align-items:flex-start;gap:.7rem;
+  padding:.55rem 0;
+  border-bottom:1px solid rgba(0,0,0,.06);
+  font-size:.92rem;color:#374151;line-height:1.5;
+}
+.about-checklist li:last-child{border:none}
+.chk{
+  width:20px;height:20px;border-radius:50%;flex-shrink:0;
+  background:var(--terracotta);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;font-weight:900;margin-top:1px;
+}
+.kpi-row{
+  display:flex;gap:2rem;padding:1.2rem 0;
+  border-top:1.5px solid var(--oat);border-bottom:1.5px solid var(--oat);
+  margin-bottom:2rem;
+}
+.kpi-num{
+  font-family:'Fraunces',serif;
+  font-size:2rem;font-weight:900;color:var(--ink);line-height:1;
+}
+.kpi-label{font-size:.7rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--stone);margin-top:.2rem}
+
+/* ═══════════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════════ */
+.contact-bg{background:var(--midnight)}
+.contact-bg .eyebrow{color:var(--terracotta)}
+.contact-bg .display{color:var(--white)}
+.contact-inner{
+  display:grid;grid-template-columns:1fr 2fr;gap:2rem;align-items:start;
+}
+.contact-panel{
+  background:var(--terracotta);border-radius:var(--r-xl);
+  padding:2.4rem;color:var(--white);
+}
+.contact-panel h3{
+  font-family:'Fraunces',serif;
+  font-size:1.6rem;font-weight:900;margin-bottom:.4rem;
+  letter-spacing:-.02em;
+}
+.contact-panel .sub{color:rgba(255,255,255,.7);font-size:.88rem;margin-bottom:2rem;line-height:1.7}
+.c-row{display:flex;align-items:flex-start;gap:1rem;padding:.8rem 0;border-bottom:1px solid rgba(255,255,255,.15)}
+.c-row:last-of-type{border:none}
+.c-ico{
+  width:38px;height:38px;border-radius:10px;flex-shrink:0;
+  background:rgba(255,255,255,.15);
+  display:flex;align-items:center;justify-content:center;font-size:.95rem;
+}
+.c-row strong{display:block;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:.2rem}
+.c-row span{font-size:.88rem;line-height:1.5}
+.contact-form{
+  background:var(--ivory);border-radius:var(--r-xl);
+  padding:2.4rem;
+}
+.contact-form h3{
+  font-family:'Fraunces',serif;
+  font-size:1.5rem;font-weight:900;margin-bottom:.25rem;
+  letter-spacing:-.02em;
+}
+.contact-form .sub{color:var(--stone);font-size:.86rem;margin-bottom:1.8rem}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.f-label{
+  display:block;font-size:.72rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.07em;
+  color:#4b5563;margin-bottom:.35rem;
+}
+.f-input{
+  width:100%;background:var(--white);
+  border:1.5px solid var(--oat);border-radius:10px;
+  padding:.68rem 1rem;font-size:.9rem;
+  font-family:'Epilogue',sans-serif;color:var(--ink);
+  outline:none;transition:border-color .2s;
+}
+.f-input:focus{border-color:var(--terracotta)}
+textarea.f-input{resize:vertical;min-height:110px}
+.f-submit{
+  width:100%;background:var(--midnight);color:var(--white);
+  border:none;border-radius:50px;padding:.9rem;
+  font-size:.94rem;font-weight:700;
+  font-family:'Epilogue',sans-serif;cursor:pointer;
+  margin-top:.75rem;transition:background .2s;
+}
+.f-submit:hover{background:var(--slate)}
+.f-submit:active{background:var(--ink);transform:scale(.97)}
+.f-success{display:none;text-align:center;padding:2rem 0}
+.f-success .s-ico{font-size:3rem;margin-bottom:.75rem}
+.f-success h4{font-family:'Fraunces',serif;font-size:1.4rem;font-weight:900;margin-bottom:.4rem}
+.f-success p{color:var(--stone);font-size:.88rem}
+.map-wrap{border-radius:var(--r-lg);overflow:hidden;margin-top:1.25rem;height:200px}
+.map-wrap iframe{width:100%;height:100%;border:none;display:block}
+
+/* ═══════════════════════════════════════════
+   CTA BAND
+═══════════════════════════════════════════ */
+.cta-bg{
+  background:var(--terracotta);
+  text-align:center;padding:6rem 0;
+  position:relative;overflow:hidden;
+}
+.cta-bg::before{
+  content:'';position:absolute;
+  width:600px;height:600px;border-radius:50%;
+  background:rgba(0,0,0,.08);
+  top:-200px;right:-200px;
+}
+.cta-bg .display{color:var(--white)}
+.cta-bg .display em{color:rgba(255,255,255,.75);font-style:italic}
+.cta-bg .lead-text{color:rgba(255,255,255,.75);margin:0 auto 2.5rem}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.cta-btn-a{
+  background:var(--white);color:var(--terracotta);
+  font-size:.95rem;font-weight:700;text-decoration:none;
+  padding:.85rem 2.2rem;border-radius:50px;
+  transition:background .2s,transform .2s;
+}
+.cta-btn-a:hover{background:var(--ivory);transform:translateY(-2px)}
+.cta-btn-a:active{background:var(--oat);transform:scale(.95) translateY(0)}
+.cta-btn-b{
+  background:rgba(255,255,255,.12);
+  border:1.5px solid rgba(255,255,255,.35);
+  color:var(--white);font-size:.95rem;font-weight:600;
+  text-decoration:none;padding:.82rem 2rem;border-radius:50px;
+  transition:background .2s;
+}
+.cta-btn-b:hover{background:rgba(255,255,255,.2)}
+.cta-btn-b:active{background:rgba(255,255,255,.28);transform:scale(.95)}
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+.footer-bg{background:var(--ink);color:rgba(255,255,255,.55)}
+.footer-inner{
+  max-width:1320px;margin:0 auto;padding:5rem 2rem 2.5rem;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;
+  gap:2rem;
+}
+.footer-logo{
+  font-family:'Fraunces',serif;
+  font-size:1.6rem;font-weight:900;color:var(--white);
+  letter-spacing:-.03em;margin-bottom:.8rem;display:block;
+}
+.footer-logo em{color:var(--terracotta);font-style:normal}
+.footer-desc{font-size:.84rem;line-height:1.7;max-width:250px;margin-bottom:1.2rem}
+.socials{display:flex;gap:.6rem}
+.soc{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--white);font-size:.82rem;text-decoration:none;
+  transition:background .2s;
+}
+.soc:hover{background:var(--terracotta)}
+.soc:active{background:var(--terracotta);transform:scale(.88)}
+.footer-col h6{
+  color:var(--white);font-size:.72rem;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem;
+}
+.footer-col a{
+  display:block;color:rgba(255,255,255,.45);text-decoration:none;
+  font-size:.84rem;margin-bottom:.5rem;transition:color .2s;
+}
+.footer-col a:hover{color:var(--terracotta)}
+.footer-col a:active{color:var(--terracotta);opacity:.7}
+.footer-bottom{
+  max-width:1320px;margin:0 auto;
+  padding:1.5rem 2rem;
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:.75rem;
+  font-size:.78rem;
+}
+.footer-bottom a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .2s}
+.footer-bottom a:hover{color:var(--terracotta)}
+
+/* ═══════════════════════════════════════════
+   SCROLL TOP
+═══════════════════════════════════════════ */
+#scrollTop{
+  position:fixed;bottom:24px;right:24px;
+  width:44px;height:44px;
+  background:var(--terracotta);color:var(--white);
+  border:none;border-radius:50%;
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;z-index:990;font-size:.9rem;
+  box-shadow:0 4px 18px rgba(193,68,14,.4);
+  transition:transform .2s;
+}
+#scrollTop:hover{transform:translateY(-3px)}
+#scrollTop:active{transform:scale(.88) translateY(0)}
+#scrollTop.show{display:flex}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════════ */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeLeft{
+  from{opacity:0;transform:translateX(32px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(1.3)}
+}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.reveal.on{opacity:1;transform:translateY(0)}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ─────────────────────────────────────────
+   5 breakpoints:
+   • ≤1100px  Tablet landscape  – reflow multi-col grids
+   • ≤900px   Tablet portrait   – stack two-col layouts
+   • ≤768px   iPad (portrait)   – burger nav, refined grids
+   • ≤640px   Mobile            – tighten spacing
+   • ≤480px   Small phone       – micro-adjustments
+═══════════════════════════════════════════ */
+
+/* ─── 1100px · Tablet landscape ──────────── */
+@media(max-width:1100px){
+  .hero-inner{gap:3rem}
+
+  /* Pet grid: 4→2 cols */
+  .pet-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Shop grid: 2 cols */
+  .shop-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Testimonials: 2 cols is fine, but ease gaps */
+  .testi-grid{gap:1.25rem}
+
+  /* Footer: collapse 5-col to 3-col */
+  .footer-inner{grid-template-columns:2fr 1fr 1fr;gap:2rem 2.5rem}
+}
+
+/* ─── 900px · Tablet portrait ────────────── */
+@media(max-width:900px){
+  .section,.section-sm{padding:5rem 0}
+
+  /* Hero: text above, image below */
+  .hero-inner{grid-template-columns:1fr;gap:3rem}
+  .hero-visual{order:-1}
+  .hero-img{aspect-ratio:16/9;max-height:400px}
+  .hero-badge-a{left:10px;bottom:14px}
+  .hero-badge-b{right:10px;top:14px}
+
+  /* Services: 2-col on tablet portrait (not single) */
+  .services-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Pet grid: 2 cols */
+  .pet-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Vets: 1 col, slim photo */
+  .vet-grid{grid-template-columns:1fr}
+  .vet-card{grid-template-columns:140px 1fr}
+
+  /* AI section: stack */
+  .ai-inner{grid-template-columns:1fr;gap:3rem}
+  .ai-feats{grid-template-columns:repeat(2,1fr)}
+  .chat-box{height:420px}
+
+  /* Shop: 2 cols */
+  .shop-grid{grid-template-columns:repeat(2,1fr)}
+
+  /* Testimonials: 1 col at tablet portrait */
+  .testi-grid{grid-template-columns:1fr}
+
+  /* Gallery: 2-col masonry */
+  .g-grid{columns:2}
+
+  /* About: stack */
+  .about-inner{grid-template-columns:1fr;gap:3rem}
+  .about-imgs{padding-bottom:0}
+  .about-accent{position:static;width:100%;margin-top:.75rem;border:none;border-radius:var(--r)}
+  .about-float{position:static;display:inline-flex;align-items:center;gap:.5rem;border-radius:50px;padding:.4rem 1rem;margin-bottom:.75rem}
+  .about-float .f-ico{display:inline;font-size:1rem;margin:0}
+  .kpi-row{flex-wrap:wrap;gap:1.25rem}
+
+  /* Contact: single col */
+  .contact-inner{grid-template-columns:1fr}
+  .contact-panel,.contact-form{border-radius:var(--r-lg)}
+
+  /* Footer: 2-col */
+  .footer-inner{grid-template-columns:1fr 1fr;gap:2rem 3rem}
+}
+
+/* ─── 768px · iPad portrait ──────────────── */
+@media(max-width:768px){
+  /* ── Nav: switch to burger at iPad ── */
+  .nav-links{display:none}
+  .nav-burger{display:flex}
+  .btn-ghost{display:none}
+  .nav-actions{gap:.5rem}
+  .nav-inner{padding:.85rem 1.5rem}
+  .nav-links.open{
+    display:flex;flex-direction:column;
+    position:absolute;top:100%;left:0;right:0;
+    background:var(--ivory);border-bottom:1px solid var(--oat);
+    padding:1.1rem 1.5rem;gap:.2rem;
+    box-shadow:0 16px 40px rgba(0,0,0,.12);
+    z-index:999;
+  }
+  .nav-links.open a{padding:.75rem 1rem;font-size:.92rem;border-radius:10px}
+
+  /* ── Hero ── */
+  .hero{padding:5rem 0 4rem}
+  .hero-inner{padding:0 1.5rem;gap:2.5rem}
+  .hero h1{font-size:clamp(2.6rem,6vw,3.6rem)}
+  .hero-desc{font-size:1rem;max-width:100%}
+  .hero-img{aspect-ratio:16/9;max-height:380px}
+  .hero-badge-a,.hero-badge-b{display:none}
+  .hero-stats{gap:2rem}
+
+  /* ── Section spacing ── */
+  .section,.section-sm{padding:4.5rem 0}
+  .container{padding:0 1.5rem}
+  .section-hd{margin-bottom:2.75rem}
+
+  /* ── Services: single column on iPad portrait ── */
+  .services-grid{grid-template-columns:1fr}
+  .service-tile{padding:2.2rem 2rem}
+
+  /* ── Pet grid: 2 cols, nicely spaced ── */
+  .pet-grid{grid-template-columns:repeat(2,1fr);gap:1rem}
+
+  /* ── Vet cards: full-width, horizontal layout ── */
+  .vet-grid{grid-template-columns:1fr;gap:1.25rem}
+  .vet-card{grid-template-columns:150px 1fr}
+  .vet-img{min-height:160px}
+
+  /* ── AI: stack cleanly ── */
+  .ai-inner{grid-template-columns:1fr;gap:2.5rem}
+  .ai-feats{grid-template-columns:repeat(2,1fr);gap:.75rem}
+  .chat-box{height:400px;padding:1.5rem}
+
+  /* ── Shop: 2 cols ── */
+  .shop-grid{grid-template-columns:repeat(2,1fr);gap:1rem}
+  .shop-thumb{height:110px;font-size:2.6rem}
+
+  /* ── Testimonials: 1 col ── */
+  .testi-grid{grid-template-columns:1fr;gap:1rem}
+  .testi-card{padding:1.8rem}
+
+  /* ── Gallery: 2 cols ── */
+  .g-grid{columns:2;column-gap:10px}
+  .g-filters{gap:.4rem;margin-bottom:1.5rem}
+  .gf-btn{font-size:.76rem;padding:.34rem .9rem}
+
+  /* ── About: stack ── */
+  .about-inner{grid-template-columns:1fr;gap:2.5rem}
+  .about-imgs{padding-bottom:0}
+  .about-accent{position:static;width:60%;margin-top:.75rem;border:none;border-radius:var(--r)}
+  .about-float{position:static;display:inline-flex;align-items:center;gap:.5rem;border-radius:50px;padding:.4rem 1rem;margin-bottom:.75rem}
+  .about-float .f-ico{display:inline;font-size:1rem;margin:0}
+  .about-main{aspect-ratio:4/3}
+  .kpi-row{flex-wrap:wrap;gap:1.5rem}
+
+  /* ── Contact: stack ── */
+  .contact-inner{grid-template-columns:1fr;gap:1.5rem}
+  .contact-panel{padding:2rem}
+  .contact-form{padding:2rem}
+  .f-grid{grid-template-columns:1fr 1fr}
+
+  /* ── Footer: 2-col ── */
+  .footer-inner{grid-template-columns:1fr 1fr;padding:3.5rem 1.5rem 2rem;gap:2rem 2.5rem}
+  .footer-bottom{padding:1.25rem 1.5rem}
+
+  /* ── CTA ── */
+  .cta-bg{padding:5rem 0}
+
+  /* ── IG strip ── */
+  .ig-item{flex:0 0 130px;height:100px}
+
+  /* ── Scroll top ── */
+  #scrollTop{bottom:20px;right:20px}
+}
+
+/* ─── 640px · Mobile ─────────────────────── */
+@media(max-width:640px){
+  .section,.section-sm{padding:4rem 0}
+  .container{padding:0 1.25rem}
+
+  /* Nav inherits burger from 768px */
+  .nav-inner{padding:.85rem 1.25rem}
+  .nav-links.open{padding:1rem 1.25rem}
+  .nav-links.open a{padding:.7rem 1rem;font-size:.9rem}
+
+  /* ── Hero ── */
+  .hero-inner{padding:0 1.25rem}
+  .hero{padding:4rem 0 3rem}
+  .hero h1{font-size:clamp(2.2rem,9vw,3rem);letter-spacing:-.04em}
+  .hero-desc{font-size:.95rem}
+  .hero-btns{flex-direction:column;align-items:flex-start;gap:.65rem}
+  .hero-btn-primary,.hero-btn-outline{width:100%;text-align:center;padding:.9rem 1.5rem}
+  .hero-stats{gap:1.5rem;flex-wrap:wrap}
+  .hero-stat-num{font-size:1.6rem}
+
+  /* ── Pet grid: 1 col ── */
+  .pet-grid{grid-template-columns:1fr}
+
+  /* ── Vet card: slim photo ── */
+  .vet-card{grid-template-columns:110px 1fr}
+  .vet-img{min-height:140px}
+  .vet-body{padding:1.1rem}
+  .vet-body h5{font-size:1rem}
+
+  /* ── AI chat ── */
+  .chat-box{height:340px;padding:1.2rem}
+  .chat-input-row{gap:.4rem}
+  .chat-send{padding:.65rem .9rem;font-size:.8rem}
+
+  /* ── Shop: 1 col ── */
+  .shop-grid{grid-template-columns:1fr}
+
+  /* ── Gallery: 1-col masonry ── */
+  .g-grid{columns:1}
+  .g-filters{gap:.4rem}
+  .gf-btn{font-size:.74rem;padding:.32rem .85rem}
+
+  /* ── IG strip ── */
+  .ig-item{flex:0 0 120px;height:90px}
+
+  /* ── About ── */
+  .about-main{aspect-ratio:3/2}
+  .about-accent{width:100%}
+
+  /* ── Contact ── */
+  .f-grid{grid-template-columns:1fr}
+  .contact-panel{padding:1.75rem}
+  .contact-form{padding:1.75rem}
+
+  /* ── CTA ── */
+  .cta-btns{flex-direction:column;align-items:center}
+  .cta-btn-a,.cta-btn-b{width:100%;max-width:320px;text-align:center}
+  .cta-bg{padding:4rem 0}
+
+  /* ── Footer ── */
+  .footer-inner{grid-template-columns:1fr;padding:3rem 1.25rem 2rem;gap:1.5rem}
+  .footer-bottom{padding:1.25rem;flex-direction:column;text-align:center;gap:.5rem}
+
+  #scrollTop{bottom:16px;right:16px;width:40px;height:40px;font-size:.82rem}
+
+  .lb-inner{padding:0 .5rem}
+  .lb-close{top:-10px;right:-10px;width:34px;height:34px}
+}
+
+/* ─── 480px · Small phone ────────────────── */
+@media(max-width:480px){
+  .hero h1{font-size:clamp(2rem,10vw,2.6rem)}
+  .hero-eyebrow{font-size:.67rem}
+  .hero-stats{gap:1rem}
+
+  .nav-logo{font-size:1.4rem}
+  .btn-fill{font-size:.78rem;padding:.45rem 1rem}
+
+  /* Vet card: full-width stacked (photo on top) */
+  .vet-card{grid-template-columns:1fr;display:flex;flex-direction:column}
+  .vet-img{width:100%;height:160px;object-position:top center;min-height:unset}
+  .vet-body{padding:1rem}
+
+  .service-tile{padding:2rem 1.5rem}
+  .testi-card{padding:1.5rem}
+
+  .display{font-size:clamp(1.7rem,7vw,2.2rem)}
+
+  .contact-panel,.contact-form{padding:1.4rem}
+  .cta-bg{padding:3rem 0}
+
+  .footer-bottom{font-size:.72rem}
+  .footer-desc{font-size:.8rem}
+
+  /* AI feats: single col */
+  .ai-feats{grid-template-columns:1fr}
+  .chat-box{height:300px}
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav" id="topNav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">Paw<em>Pal</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#adopt">Adopt</a></li>
+      <li><a href="#vets">Vets</a></li>
+      <li><a href="#shop">Shop</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#ai-assistant">AI</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn-ghost">Sign In</a>
+      <a href="#" class="btn-fill">Get Started</a>
+      <button class="nav-burger" id="burger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="hero-eyebrow"><i class="fa-solid fa-star fa-xs"></i> Trusted by 50,000+ Pet Owners</div>
+      <h1>Find Your <i>Perfect</i><br>Companion<br>Today</h1>
+      <p class="hero-desc">One platform for adopting pets, booking expert vets, and shopping premium pet essentials. Powered by AI to give your furry family the best care.</p>
+      <div class="hero-btns">
+        <a href="#adopt" class="hero-btn-primary">🐾 Adopt a Pet</a>
+        <a href="#ai-assistant" class="hero-btn-outline">🤖 Ask AI Assistant</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">12K+</div>
+          <div class="hero-stat-label">Pets Adopted</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">340+</div>
+          <div class="hero-stat-label">Expert Vets</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">98%</div>
+          <div class="hero-stat-label">Happy Owners</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=700&q=80&auto=format&fit=crop" class="hero-img" alt="Happy pets"/>
+      <div class="hero-badge-a">
+        <span class="icon">🐾</span>
+        <div><strong>New Arrivals</strong><small>6 pets added today</small></div>
+      </div>
+      <div class="hero-badge-b">✨ AI Pet Advisor<br><span style="font-weight:400;font-size:.74rem;opacity:.85">Available 24/7</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SERVICES ═══ -->
+<section class="section services-bg" id="services">
+  <div class="container">
+    <div class="section-hd reveal">
+      <span class="eyebrow">What We Offer</span>
+      <h2 class="display">Everything Your Pet<br><em>Could Ever Need</em></h2>
+      <p class="lead-text">From finding a lifelong friend to expert medical care and premium nutrition — all in one beautiful place.</p>
+    </div>
+    <div class="services-grid reveal">
+      <div class="service-tile">
+        <div class="tile-num">01</div>
+        <div class="tile-icon adopt">🐕</div>
+        <h3>Adopt a Pet</h3>
+        <p>Browse hundreds of loving animals waiting for their forever home. Our matching algorithm pairs you with the perfect companion.</p>
+        <a href="#adopt" class="tile-link">Browse pets <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+      </div>
+      <div class="service-tile">
+        <div class="tile-num">02</div>
+        <div class="tile-icon vet">🩺</div>
+        <h3>Vet Health Care</h3>
+        <p>Book same-day or scheduled appointments with certified veterinarians. In-clinic or virtual across 50+ specialties.</p>
+        <a href="#vets" class="tile-link">Meet our vets <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+      </div>
+      <div class="service-tile">
+        <div class="tile-num">03</div>
+        <div class="tile-icon shop">🛒</div>
+        <h3>Quality Pet Shop</h3>
+        <p>Premium food, toys, accessories, and supplements curated by our vet team. Free delivery on orders over $35.</p>
+        <a href="#shop" class="tile-link">Shop now <i class="fa-solid fa-arrow-right fa-xs"></i></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ADOPT ═══ -->
+<section class="section adopt-bg" id="adopt">
+  <div class="container">
+    <div class="section-hd reveal" style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap">
+      <div>
+        <span class="eyebrow">Ready for a Home</span>
+        <h2 class="display display-inv" style="margin-bottom:0">Meet Your Future<br><em>Best Friend</em></h2>
+      </div>
+      <a href="#" style="color:rgba(255,255,255,.55);font-size:.86rem;font-weight:600;text-decoration:none;white-space:nowrap">View All Pets →</a>
+    </div>
+    <div class="pet-grid" id="petsGrid"></div>
+  </div>
+</section>
+
+<!-- ═══ VETS ═══ -->
+<section class="section vets-bg" id="vets">
+  <div class="container">
+    <div class="section-hd text-center reveal" style="text-align:center">
+      <span class="eyebrow">Expert Team</span>
+      <h2 class="display">Trusted Vets, <em>Caring Hands</em></h2>
+      <p class="lead-text" style="margin:0 auto">Board-certified veterinarians with years of specialized experience caring for your animals.</p>
+    </div>
+    <div class="vet-grid" id="vetsGrid"></div>
+  </div>
+</section>
+
+<!-- ═══ AI ═══ -->
+<section class="section ai-bg" id="ai-assistant">
+  <div class="container">
+    <div class="ai-inner">
+      <div class="reveal">
+        <span class="eyebrow">Powered by Claude AI</span>
+        <h2 class="display display-inv">Your Smart<br><em>Pet Advisor</em></h2>
+        <p style="color:rgba(255,255,255,.55);font-size:.92rem;line-height:1.8;margin-bottom:0">Ask anything about pet care, nutrition, behavior, or health. Available around the clock.</p>
+        <div class="ai-feats">
+          <div class="ai-feat"><div class="feat-ico">🍎</div><strong>Diet & Nutrition</strong><small>Custom meal plans</small></div>
+          <div class="ai-feat"><div class="feat-ico">🏥</div><strong>Symptom Checker</strong><small>Early issue detection</small></div>
+          <div class="ai-feat"><div class="feat-ico">🎓</div><strong>Training Tips</strong><small>Behavior guides</small></div>
+          <div class="ai-feat"><div class="feat-ico">💊</div><strong>Medication Guide</strong><small>Safe dosage info</small></div>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="chat-box">
+          <div class="chat-hd">
+            <div class="chat-dot"></div>
+            <div class="chat-hd-text">
+              <strong>PawPal AI Assistant</strong>
+              <small>Ask me anything about pet care</small>
+            </div>
+          </div>
+          <div class="chat-msgs" id="chatMessages">
+            <div class="msg msg-bot">👋 Hi! I'm PawPal's AI assistant. Ask me anything about pet care — nutrition, health, training, or which pet might suit your lifestyle!</div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" class="chat-input" id="chatInput" placeholder="E.g. What should I feed a 3-year-old Golden Retriever?"/>
+            <button class="chat-send" id="sendBtn">Send <i class="fa-solid fa-paper-plane fa-xs"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SHOP ═══ -->
+<section class="section shop-bg" id="shop">
+  <div class="container">
+    <div class="section-hd reveal" style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap">
+      <div>
+        <span class="eyebrow">Premium Selection</span>
+        <h2 class="display" style="margin-bottom:0">Vet-Approved <em>Products</em></h2>
+      </div>
+      <a href="#" style="color:var(--terracotta);font-size:.86rem;font-weight:600;text-decoration:none;white-space:nowrap">Full Shop →</a>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section class="section testi-bg">
+  <div class="container">
+    <div class="section-hd text-center reveal" style="text-align:center">
+      <span class="eyebrow">Happy Families</span>
+      <h2 class="display">What Pet Owners<br><em>Are Saying</em></h2>
+    </div>
+    <div class="testi-grid" id="testiGrid"></div>
+  </div>
+</section>
+
+<!-- ═══ GALLERY ═══ -->
+<section class="section gallery-bg" id="gallery">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap;margin-bottom:2rem" class="reveal">
+      <div>
+        <span class="eyebrow">Happy Moments</span>
+        <h2 class="display display-inv" style="margin-bottom:.35rem">Life with <em>Pets</em></h2>
+        <p class="lead-text">Real moments from our PawPal community.</p>
+      </div>
+      <div class="g-filters" id="galleryFilters"></div>
+    </div>
+    <div class="g-grid reveal" id="galleryGrid"></div>
+    <div class="ig-strip" id="igStrip"></div>
+  </div>
+</section>
+
+<!-- lightbox -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-inner">
+    <button class="lb-close" onclick="closeLightboxBtn()"><i class="fa-solid fa-xmark"></i></button>
+    <img id="lbImg" src="" alt=""/>
+    <div class="lb-cap"><strong id="lbTitle"></strong></div>
+  </div>
+</div>
+
+<!-- ═══ ABOUT ═══ -->
+<section class="section about-bg" id="about">
+  <div class="container">
+    <div class="about-inner">
+      <div class="reveal">
+        <div class="about-imgs">
+          <div class="about-float">
+            <span class="f-ico">🏆</span>
+            Trusted by<br>50K+ Families
+          </div>
+          <img class="about-main" src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=700&q=80&auto=format&fit=crop" alt="Dog with owner"/>
+          <img class="about-accent" src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500&q=80&auto=format&fit=crop" alt="Pets playing"/>
+        </div>
+      </div>
+      <div class="reveal">
+        <span class="eyebrow">Our Story</span>
+        <h2 class="display">Built by Pet Lovers,<br><em>For Pet Lovers</em></h2>
+        <p style="color:#4b5563;line-height:1.85;margin-bottom:1.2rem;font-size:.94rem">PawPal was born in 2020 when our team of vets, designers, and animal-welfare advocates grew frustrated with how fragmented pet care had become. We built one platform that brings adoption, expert vet care, and AI guidance together.</p>
+        <ul class="about-checklist">
+          <li><span class="chk">✓</span> Licensed vet partnerships across 30+ cities worldwide</li>
+          <li><span class="chk">✓</span> AI trained on 12 million real pet health consultations</li>
+          <li><span class="chk">✓</span> Every rescue pet receives a free first vet visit</li>
+          <li><span class="chk">✓</span> Carbon-neutral delivery on all shop orders</li>
+        </ul>
+        <div class="kpi-row">
+          <div><div class="kpi-num">50K+</div><div class="kpi-label">Pets Rehomed</div></div>
+          <div><div class="kpi-num">200+</div><div class="kpi-label">Partner Vets</div></div>
+          <div><div class="kpi-num">98%</div><div class="kpi-label">Happy Owners</div></div>
+          <div><div class="kpi-num">4.9★</div><div class="kpi-label">App Rating</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;padding-top:1.2rem;border-top:1.5px solid var(--oat)">
+          <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=120&q=80&auto=format&fit=crop" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid var(--terracotta);flex-shrink:0" alt="Founder"/>
+          <div>
+            <div style="font-family:'Fraunces',serif;font-size:1rem;font-weight:700">Dr. Maya Lin</div>
+            <div style="font-size:.78rem;color:var(--stone)">Co-founder &amp; Chief Veterinary Officer</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACT ═══ -->
+<section class="section contact-bg" id="contact">
+  <div class="container">
+    <div class="section-hd text-center reveal" style="text-align:center">
+      <span class="eyebrow">Get in Touch</span>
+      <h2 class="display display-inv">We'd Love to <em>Hear from You</em></h2>
+      <p class="lead-text" style="margin:0 auto;color:rgba(255,255,255,.45)">Our friendly team usually replies within a few hours.</p>
+    </div>
+    <div class="contact-inner reveal">
+      <div class="contact-panel">
+        <h3>Let's Talk 🐾</h3>
+        <p class="sub">Reach out through any channel — we're friendly and fast.</p>
+        <div class="c-row">
+          <div class="c-ico">📍</div>
+          <div><strong>Address</strong><span>42 Paw Street, Pet City, CA 90210</span></div>
+        </div>
+        <div class="c-row">
+          <div class="c-ico">📞</div>
+          <div><strong>Phone</strong><span>+1 (800) PAW-PALS</span></div>
+        </div>
+        <div class="c-row">
+          <div class="c-ico">✉️</div>
+          <div><strong>Email</strong><span>hello@pawpal.co</span></div>
+        </div>
+        <div class="c-row">
+          <div class="c-ico">🚨</div>
+          <div><strong>Emergency</strong><span>+1 (800) VET-HELP</span></div>
+        </div>
+        <div style="display:flex;gap:.6rem;margin-top:1.5rem">
+          <a href="#" class="soc"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="soc"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="soc"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="soc"><i class="fab fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="contact-form">
+        <h3>Send Us a Message</h3>
+        <p class="sub">Fill out the form and we'll reply within 24 hours.</p>
+        <div id="contactForm">
+          <div class="f-grid" style="margin-bottom:1rem">
+            <div><label class="f-label">First Name</label><input type="text" class="f-input" id="cf-fn" placeholder="Jane"/></div>
+            <div><label class="f-label">Last Name</label><input type="text" class="f-input" id="cf-ln" placeholder="Smith"/></div>
+          </div>
+          <div class="f-grid" style="margin-bottom:1rem">
+            <div><label class="f-label">Email</label><input type="email" class="f-input" id="cf-em" placeholder="jane@email.com"/></div>
+            <div><label class="f-label">Topic</label>
+              <select class="f-input" id="cf-tp">
+                <option>Pet Adoption</option>
+                <option>Vet Booking</option>
+                <option>Shop / Order</option>
+                <option>AI Assistant</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:.75rem"><label class="f-label">Your Message</label><textarea class="f-input" id="cf-msg" placeholder="Tell us how we can help…"></textarea></div>
+          <button class="f-submit" onclick="submitForm()">Send Message <i class="fa-solid fa-paper-plane ms-2"></i></button>
+        </div>
+        <div class="f-success" id="cfSuccess">
+          <div class="s-ico">🎉</div>
+          <h4>Message Sent!</h4>
+          <p>We'll reply within 24 hours. Why not meet some adorable pets?</p>
+          <a href="#adopt" style="display:inline-block;margin-top:1rem;background:var(--terracotta);color:#fff;padding:.7rem 1.8rem;border-radius:50px;text-decoration:none;font-weight:700;font-size:.88rem">Browse Pets</a>
+        </div>
+        <div class="map-wrap">
+          <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-118.32%2C33.98%2C-118.28%2C34.02&layer=mapnik" title="PawPal HQ" loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-bg">
+  <div class="container" style="position:relative;z-index:1">
+    <div style="font-size:3rem;margin-bottom:1rem">🐾</div>
+    <h2 class="display" style="margin-bottom:1rem">Ready to Welcome a<br><em>New Family Member?</em></h2>
+    <p class="lead-text" style="margin:0 auto 2.5rem;color:rgba(255,255,255,.7)">Join thousands of happy pet families who found their perfect match on PawPal. Takes just 2 minutes.</p>
+    <div class="cta-btns">
+      <a href="#adopt" class="cta-btn-a">Start Adopting</a>
+      <a href="#ai-assistant" class="cta-btn-b">Talk to AI</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer-bg">
+  <div class="footer-inner">
+    <div>
+      <a class="footer-logo">Paw<em>Pal</em></a>
+      <p class="footer-desc">Your all-in-one platform for pet adoption, vet care, and premium pet products. Powered by AI.</p>
+      <div class="socials">
+        <a href="#" class="soc"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="soc"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="soc"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="soc"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h6>Adopt</h6>
+      <a href="#">Browse Pets</a>
+      <a href="#">How It Works</a>
+      <a href="#">Success Stories</a>
+      <a href="#">Shelters</a>
+    </div>
+    <div class="footer-col">
+      <h6>Health</h6>
+      <a href="#">Find a Vet</a>
+      <a href="#">Virtual Care</a>
+      <a href="#">Pet Insurance</a>
+      <a href="#">Vaccines</a>
+    </div>
+    <div class="footer-col">
+      <h6>Shop</h6>
+      <a href="#">Pet Food</a>
+      <a href="#">Toys & Play</a>
+      <a href="#">Grooming</a>
+      <a href="#">Accessories</a>
+    </div>
+    <div class="footer-col">
+      <h6>Company</h6>
+      <a href="#">About Us</a>
+      <a href="#">Blog</a>
+      <a href="#">Careers</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 PawPal. All rights reserved.</span>
+    <span><a href="#">Privacy</a> · <a href="#">Terms</a> · <a href="#">Cookies</a></span>
+  </div>
+</footer>
+
+<button id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+/* ─── DATA ─── */
+const pets = [
+  { name:"Milo", species:"Golden Retriever", age:"2 yrs", gender:"Male", tags:["Friendly","Vaccinated","Trained"], isNew:true,
+    img:"https://images.unsplash.com/photo-1633722715463-d30f4f325e24?w=600&q=80&auto=format&fit=crop" },
+  { name:"Bella", species:"Domestic Cat", age:"1 yr", gender:"Female", tags:["Indoor","Calm","Playful"], isNew:true,
+    img:"https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80&auto=format&fit=crop" },
+  { name:"Charlie", species:"Labrador Mix", age:"3 yrs", gender:"Male", tags:["Energetic","Good w/ Kids"],
+    img:"https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&q=80&auto=format&fit=crop" },
+  { name:"Luna", species:"Persian Cat", age:"4 yrs", gender:"Female", tags:["Gentle","Vaccinated"],
+    img:"https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&q=80&auto=format&fit=crop" }
+];
+const vets = [
+  { name:"Dr. Sarah Chen", specialty:"General Practice", rating:4.9, reviews:312, exp:"8 yrs",
+    img:"https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80&auto=format&fit=crop" },
+  { name:"Dr. Mark Rivera", specialty:"Surgery & Ortho", rating:4.8, reviews:198, exp:"12 yrs",
+    img:"https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=400&q=80&auto=format&fit=crop" }
+];
+const products = [
+  { name:"Premium Salmon Kibble", cat:"Dog Food", price:"$34.99", old:"$42.00", emoji:"🐟", bg:"#fde8d0" },
+  { name:"Interactive Puzzle Toy", cat:"Enrichment", price:"$19.99", old:"$26.00", emoji:"🧩", bg:"#d0ead8" },
+  { name:"Grain-Free Cat Food", cat:"Cat Food", price:"$28.50", old:"$35.00", emoji:"🐟", bg:"#d0dcea" },
+  { name:"Orthopedic Dog Bed", cat:"Comfort", price:"$59.99", old:"$79.00", emoji:"🛏️", bg:"#f0dcd4" }
+];
+const testimonials = [
+  { text:'"PawPal made adopting our dog Milo so simple. The AI advisor helped us pick the perfect food and training plan. He\'s thriving!"',
+    name:"Amara Johnson", role:"Dog Mom · Austin, TX", stars:5, emoji:"😊" },
+  { text:'"Booked a virtual vet within 10 minutes when my cat seemed unwell. Dr. Patel was thorough and so reassuring. Worth every penny."',
+    name:"Tariq Ali", role:"Cat Dad · Chicago, IL", stars:5, emoji:"😄" }
+];
+const galleryImages = [
+  { src:"https://images.unsplash.com/photo-1552053831-71594a27632d?w=600&q=80&auto=format&fit=crop", title:"Max on a walk", cat:"dogs" },
+  { src:"https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600&q=80&auto=format&fit=crop", title:"Cozy Luna", cat:"cats" },
+  { src:"https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&q=80&auto=format&fit=crop", title:"Playful pups", cat:"dogs" },
+  { src:"https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=600&q=80&auto=format&fit=crop", title:"Vet check-up", cat:"vets" },
+  { src:"https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&q=80&auto=format&fit=crop", title:"Bella in sunlight", cat:"cats" },
+  { src:"https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80&auto=format&fit=crop", title:"Best friends", cat:"moments" }
+];
+const igPhotos = [
+  "https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=400&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=400&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&q=80&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&q=80&auto=format&fit=crop"
+];
+
+/* ─── RENDER ─── */
+function renderPets() {
+  document.getElementById('petsGrid').innerHTML = pets.map((p,i) => `
+    <div class="pet-card">
+      <div class="pet-thumb">
+        <img src="${p.img}" alt="${p.name}" loading="lazy"/>
+        <span class="pet-badge ${p.gender==='Female'?'badge-f':'badge-m'}">${p.gender==='Female'?'♀ Female':'♂ Male'}</span>
+        ${p.isNew?'<span class="new-badge">New</span>':''}
+      </div>
+      <div class="pet-body">
+        <h5>${p.name}</h5>
+        <div class="pet-meta">${p.species} · ${p.age}</div>
+        <div class="pet-tags">${p.tags.map(t=>`<span class="pet-tag">${t}</span>`).join('')}</div>
+        <button class="pet-adopt" onclick="alert('Starting adoption application for ${p.name}...')">🐾 Apply to Adopt</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderVets() {
+  document.getElementById('vetsGrid').innerHTML = vets.map(v => `
+    <div class="vet-card">
+      <img class="vet-img" src="${v.img}" alt="${v.name}" loading="lazy"/>
+      <div class="vet-body">
+        <span class="vet-badge">⭐ ${v.rating} · ${v.reviews} reviews</span>
+        <h5>${v.name}</h5>
+        <div class="vet-specialty">${v.specialty} · ${v.exp} exp.</div>
+        <div class="vet-stars">${'★'.repeat(Math.floor(v.rating))}<span>${v.reviews} reviews</span></div>
+        <button class="vet-book" onclick="alert('Booking with ${v.name}...')"><i class="fa-regular fa-calendar me-1"></i> Book Appointment</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderShop() {
+  document.getElementById('shopGrid').innerHTML = products.map(p => `
+    <div class="shop-card">
+      <div class="shop-thumb" style="background:${p.bg}">${p.emoji}</div>
+      <div class="shop-info">
+        <div class="shop-cat">${p.cat}</div>
+        <h6>${p.name}</h6>
+        <div style="display:flex;align-items:center;gap:.5rem;margin-top:.35rem">
+          <span class="shop-price">${p.price}</span>
+          <span style="color:#9ca3af;text-decoration:line-through;font-size:.8rem">${p.old}</span>
+        </div>
+        <button class="shop-add" onclick="addToCart(this,'${p.name}')">+ Add to Cart</button>
+      </div>
+    </div>`).join('');
+}
+
+function addToCart(btn, name) {
+  btn.textContent = '✓ Added!';
+  btn.style.background = '#16a34a';
+  setTimeout(() => { btn.textContent = '+ Add to Cart'; btn.style.background = ''; }, 1600);
+}
+
+function renderTestimonials() {
+  document.getElementById('testiGrid').innerHTML = testimonials.map(t => `
+    <div class="testi-card">
+      <div class="testi-stars">${'★'.repeat(t.stars)}</div>
+      <p class="testi-text">${t.text}</p>
+      <div class="testi-author">
+        <div class="testi-av">${t.emoji}</div>
+        <div><strong>${t.name}</strong><small>${t.role}</small></div>
+      </div>
+    </div>`).join('');
+}
+
+let filteredGallery = galleryImages, lbIdx = 0;
+function renderGallery(filter='all') {
+  filteredGallery = filter==='all' ? galleryImages : galleryImages.filter(g=>g.cat===filter);
+  const grid = document.getElementById('galleryGrid');
+  grid.innerHTML = filteredGallery.map((img,i) => `
+    <div class="g-item" onclick="openLb(${i})">
+      <img src="${img.src}" alt="${img.title}" loading="lazy"/>
+      <div class="g-overlay"><h6>${img.title}</h6><span>${img.cat}</span></div>
+    </div>`).join('');
+}
+
+function buildFilters() {
+  document.getElementById('galleryFilters').innerHTML =
+    [['all','All'],['dogs','Dogs 🐕'],['cats','Cats 🐱'],['vets','Vet Care 🩺'],['moments','Moments ❤️']]
+    .map(([cat,label]) => `<button class="gf-btn${cat==='all'?' active':''}" onclick="filterGallery('${cat}',this)">${label}</button>`)
+    .join('');
+}
+
+function filterGallery(cat, btn) {
+  document.querySelectorAll('.gf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGallery(cat);
+}
+
+function openLb(i) {
+  lbIdx = i;
+  const img = filteredGallery[i];
+  document.getElementById('lbImg').src = img.src;
+  document.getElementById('lbTitle').textContent = img.title;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightboxBtn() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox')) closeLightboxBtn();
+});
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeLightboxBtn(); });
+
+function renderIgStrip() {
+  document.getElementById('igStrip').innerHTML = igPhotos.map(src =>
+    `<div class="ig-item"><img src="${src}" alt="Community photo" loading="lazy"/></div>`).join('');
+}
+
+/* ─── AI CHAT ─── */
+const SYS = `You are PawPal's friendly AI pet care advisor. Keep answers warm, concise (2-4 sentences), and pet-focused. Use relevant emojis occasionally. If something is medically serious, recommend seeing a vet. Never claim to replace professional care.`;
+let chatHistory = [];
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const btn = document.getElementById('sendBtn');
+  const msg = input.value.trim();
+  if (!msg) return;
+  appendMsg(msg, 'user');
+  input.value = '';
+  btn.disabled = true;
+  appendMsg('Thinking…', 'bot', 'typingMsg');
+  chatHistory.push({ role:'user', content:msg });
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:SYS, messages:chatHistory })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || "I'm having trouble right now. Please try again!";
+    const t = document.getElementById('typingMsg'); if(t) t.remove();
+    appendMsg(reply, 'bot');
+    chatHistory.push({ role:'assistant', content:reply });
+  } catch {
+    const t = document.getElementById('typingMsg'); if(t) t.remove();
+    appendMsg("Couldn't connect right now. Please try again in a moment! 🐾", 'bot');
+  }
+  btn.disabled = false;
+}
+function appendMsg(text, type, id) {
+  const box = document.getElementById('chatMessages');
+  const d = document.createElement('div');
+  d.className = `msg msg-${type}`;
+  if (id) d.id = id;
+  d.textContent = text;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+document.getElementById('chatInput').addEventListener('keydown', e => { if(e.key==='Enter') sendMessage(); });
+
+/* ─── CONTACT FORM ─── */
+function submitForm() {
+  const fn = document.getElementById('cf-fn').value.trim();
+  const em = document.getElementById('cf-em').value.trim();
+  const msg = document.getElementById('cf-msg').value.trim();
+  if (!fn || !em || !msg) { alert('Please fill in your name, email, and message.'); return; }
+  document.getElementById('contactForm').style.display = 'none';
+  document.getElementById('cfSuccess').style.display = 'block';
+}
+
+/* ─── NAV ─── */
+// mobile burger
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+  document.getElementById('burger').classList.toggle('is-open');
+});
+// close on link click
+document.querySelectorAll('#navLinks a').forEach(a => a.addEventListener('click', () => {
+  document.getElementById('navLinks').classList.remove('open');
+  document.getElementById('burger').classList.remove('is-open');
+}));
+// scroll effects
+window.addEventListener('scroll', () => {
+  document.querySelector('.nav').classList.toggle('scrolled', window.scrollY > 20);
+  document.getElementById('scrollTop').classList.toggle('show', window.scrollY > 400);
+  // scroll spy
+  const nb = document.querySelector('.nav').getBoundingClientRect().height;
+  const offset = window.scrollY + nb + 12;
+  let current = 'home';
+  document.querySelectorAll('section[id]').forEach(sec => {
+    if (sec.getBoundingClientRect().top + window.scrollY <= offset) current = sec.id;
+  });
+  document.querySelectorAll('#navLinks a').forEach(a => {
+    const active = a.getAttribute('href') === '#' + current;
+    a.classList.toggle('active', active);
+  });
+}, { passive:true });
+
+/* ─── REVEAL ANIMATIONS ─── */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold:0.1 });
+document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+/* ─── INIT ─── */
+renderPets(); renderVets(); renderShop(); renderTestimonials();
+renderGallery(); buildFilters(); renderIgStrip();
+</script>
+</body>
+</html>
